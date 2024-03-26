@@ -81,6 +81,18 @@ describe("Gilded Rose", function() {
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(0);
   });
+
+  it("should decreased quality 2 times faster if element is conjured", function() {
+    const gildedRose = new Shop([new Item("foo conjured", 10, 50)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(48);
+  });
+
+  it("should decrease sellIn by one each day for a conjured item", function() {
+    const gildedRose = new Shop([new Item("foo conjured", 10, 50)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].sellIn).toBe(9);
+  });
 });
 
 

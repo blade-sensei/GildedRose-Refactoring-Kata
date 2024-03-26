@@ -39,7 +39,11 @@ class Shop {
   }
 
   isClassicItem(item) {
-    return item.name !== this.agedBrie && item.name !== this.backstagePass && item.name !== this.sulfuras;
+    return item.name !== this.agedBrie && item.name !== this.backstagePass && item.name !== this.sulfuras && !item.name.includes('conjured');
+  }
+
+  isConjuredItem(item) {
+    return item.name.includes("conjured") 
   }
 
   incrementQuality(item) {
@@ -65,7 +69,6 @@ class Shop {
       //inverse le if et le else pour avoir if (this.isItemThatIncreaseValueWhenIsOld) ?
       //peut être plus lisible
 
-
       //item classique
       if (this.isClassicItem(item)) {
         this.defaultDecrementQuality(item);
@@ -73,6 +76,12 @@ class Shop {
         if (this.isItemExpired(item)) {
           this.defaultDecrementQuality(item);
         }
+      }
+
+      if (this.isConjuredItem(item)) {
+        this.defaultDecrementQuality(item);
+        this.defaultDecrementQuality(item);
+        this.decreaseExpirationSellIn(item);
       }
 
       //item ageBrie
@@ -89,15 +98,8 @@ class Shop {
         if (this.isItemExpired(item)) {
           this.makeBackstagePassUnusable(item);
         }
+
       }
-
-      //
-
-      //faire la distinction entre classics iteams et sulfuras
-
-      //gene iteam au mieu de rien
-
-      //fonction manageExpiredItem -> voir une class
     }
 
     return this.items;
@@ -144,5 +146,3 @@ module.exports = {
   Inventory,
 };
 
-//replacer le for par un switch -> items -> pollyphormis
-//Item Brige
