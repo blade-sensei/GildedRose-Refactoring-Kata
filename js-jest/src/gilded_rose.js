@@ -12,6 +12,46 @@ class Item {
   }
 }
 
+class ClassicItem extends Item {
+  constructor(name, sellIn, quality) {
+    super(name, sellIn, quality);
+  }
+
+  defaultDecrementQuality() {
+    if (this.quality > 0) {
+      //cette condition risque de poser probleme. peut être il faut l extraire ailleurs
+
+      //ici la class connait d'autres item extérieurs... voir un moyen pour fixer 
+      if (this.name != Inventory.sulfuras) {
+        this.quality = this.quality - 1;
+      }
+    }
+  }
+
+  decreaseExpirationSellIn() {
+    if (!this.isInExpirableItem()) {
+      this.sellIn = this.sellIn - 1;
+    }
+  }
+
+  isInExpirableItem() {
+    //ici la class connait d'autres item extérieurs... voir un moyen pour fixer 
+    return this.name == Inventory.sulfuras;
+  }
+
+  isItemExpired() {
+    return this.sellIn < 0;
+  }
+
+  update() {
+    this.defaultDecrementQuality();
+    this.decreaseExpirationSellIn();
+    if (this.isItemExpired()) {
+      this.defaultDecrementQuality();
+    }
+  }
+}
+
 class Shop {
   constructor(items = []) {
     this.items = items;
@@ -39,11 +79,16 @@ class Shop {
   }
 
   isClassicItem(item) {
-    return item.name !== this.agedBrie && item.name !== this.backstagePass && item.name !== this.sulfuras && !item.name.includes('conjured');
+    return (
+      item.name !== this.agedBrie &&
+      item.name !== this.backstagePass &&
+      item.name !== this.sulfuras &&
+      !item.name.includes("conjured")
+    );
   }
 
   isConjuredItem(item) {
-    return item.name.includes("conjured") 
+    return item.name.includes("conjured");
   }
 
   incrementQuality(item) {
@@ -70,12 +115,16 @@ class Shop {
       //peut être plus lisible
 
       //item classique
-      if (this.isClassicItem(item)) {
-        this.defaultDecrementQuality(item);
-        this.decreaseExpirationSellIn(item);
-        if (this.isItemExpired(item)) {
-          this.defaultDecrementQuality(item);
-        }
+      // if (this.isClassicItem(item)) {
+      //   this.defaultDecrementQuality(item);
+      //   this.decreaseExpirationSellIn(item);
+      //   if (this.isItemExpired(item)) {
+      //     this.defaultDecrementQuality(item);
+      //   }
+      // }
+
+      if (this.isClassicItem(item) ) {
+        item.update()
       }
 
       if (this.isConjuredItem(item)) {
@@ -98,7 +147,6 @@ class Shop {
         if (this.isItemExpired(item)) {
           this.makeBackstagePassUnusable(item);
         }
-
       }
     }
 
@@ -144,5 +192,5 @@ module.exports = {
   Item,
   Shop,
   Inventory,
+  ClassicItem
 };
-

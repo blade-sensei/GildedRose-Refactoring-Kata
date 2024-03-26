@@ -1,14 +1,14 @@
-const {Shop, Item, Inventory} = require("../src/gilded_rose");
+const {Shop, Item, Inventory, ClassicItem} = require("../src/gilded_rose");
 
 describe("Gilded Rose", function() {
   it("should foo", function() {
-    const gildedRose = new Shop([new Item("foo", 0, 0)]);
+    const gildedRose = new Shop([new ClassicItem("foo", 0, 0)]);
     const items = gildedRose.updateQuality();
     expect(items[0].name).toBe("foo");
   });
 
   it("should decrease sellIn at the end of the day", function() {
-    const gildedRose = new Shop([new Item("foo", 1, 10), new Item("test", 3, 2)]);
+    const gildedRose = new Shop([new ClassicItem("foo", 1, 10), new ClassicItem("test", 3, 2)]);
     const items = gildedRose.updateQuality();
 
     expect(items[0].sellIn).toBe(0);
@@ -18,13 +18,13 @@ describe("Gilded Rose", function() {
   })
 
   it("should quality degrade 2 times faster if sellIn is greater than today", function() {
-    const gildedRose = new Shop([new Item("foo", -2, 10)]);
+    const gildedRose = new Shop([new ClassicItem("foo", -2, 10)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(8);
   });
 
   it("should quality never be negative", function() {
-    const gildedRose = new Shop([new Item("foo", 2, 0)]);
+    const gildedRose = new Shop([new ClassicItem("foo", 2, 0)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(0);
   });
@@ -91,6 +91,13 @@ describe("Gilded Rose", function() {
   it("should decrease sellIn by one each day for a conjured item", function() {
     const gildedRose = new Shop([new Item("foo conjured", 10, 50)]);
     const items = gildedRose.updateQuality();
+    expect(items[0].sellIn).toBe(9);
+  });
+
+  it("should update ClassicItem", function() {
+    const gildedRose = new Shop([new ClassicItem("foo", 10, 50)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(49);
     expect(items[0].sellIn).toBe(9);
   });
 });
