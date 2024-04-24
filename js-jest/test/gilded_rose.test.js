@@ -1,4 +1,4 @@
-const {Shop, Item, Inventory, ClassicItem} = require("../src/gilded_rose");
+const {Shop, Item, Inventory, ClassicItem, ConjuredItem, AgedBrie, BackStageItem } = require("../src/gilded_rose");
 
 describe("Gilded Rose", function() {
   it("should foo", function() {
@@ -30,14 +30,14 @@ describe("Gilded Rose", function() {
   });
 
   it("Aged Brie increases quality", function() {
-    const gildedRose = new Shop([new Item("Aged Brie", 2, 0)]);
+    const gildedRose = new Shop([new AgedBrie("Aged Brie", 2, 0)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(1);
     expect(items[0].sellIn).toBe(1);
   });
 
   it("quality is never >= 50", function() {
-    const gildedRose = new Shop([new Item("Aged Brie", 2, 50)]);
+    const gildedRose = new Shop([new AgedBrie("Aged Brie", 2, 50)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(50);
   });
@@ -56,41 +56,50 @@ describe("Gilded Rose", function() {
   });
 
   it(`should increase quality if item is ${Inventory.backstagePass}`, function() {
-    const gildedRose = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 12, 20)]);
+    const gildedRose = new Shop([new BackStageItem("Backstage passes to a TAFKAL80ETC concert", 12, 20)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(21);
     expect(items[0].sellIn).toBe(11);
   });
 
   it("should increase quality by 2 if item is Backstage passes to a TAFKAL80ETC concert and sellIn is <= 10", function() {
-    const gildedRose = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 10, 20), new Item("Backstage passes to a TAFKAL80ETC concert", 9, 10)]);
+    const gildedRose = new Shop([new BackStageItem("Backstage passes to a TAFKAL80ETC concert", 10, 20), new BackStageItem("Backstage passes to a TAFKAL80ETC concert", 9, 10)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(22);
     expect(items[1].quality).toBe(12);
   });
 
   it("should increase quality by 3 if item is Backstage passes to a TAFKAL80ETC concert  and sellIn is <= 5", function() {
-    const gildedRose = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 5, 20), new Item("Backstage passes to a TAFKAL80ETC concert", 3, 10)]);
+    const gildedRose = new Shop([new BackStageItem("Backstage passes to a TAFKAL80ETC concert", 5, 20), new BackStageItem("Backstage passes to a TAFKAL80ETC concert", 3, 10)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(23);
     expect(items[1].quality).toBe(13);
   });
   
   it("should quality == 0 if Backstage passes to a TAFKAL80ETC concert", function() {
-    const gildedRose = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 0, 20)]);
+    const gildedRose = new Shop([new BackStageItem("Backstage passes to a TAFKAL80ETC concert", 0, 20)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(0);
   });
 
+
   it("should decreased quality 2 times faster if element is conjured", function() {
-    const gildedRose = new Shop([new Item("foo conjured", 10, 50)]);
+    const gildedRose = new Shop([new ConjuredItem("foo conjured", 10, 50)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(48);
   });
 
   it("should decrease sellIn by one each day for a conjured item", function() {
-    const gildedRose = new Shop([new Item("foo conjured", 10, 50)]);
+    // Instanciate with only name and add conjured in the constructor
+    const gildedRose = new Shop([new ConjuredItem("foo conjured", 10, 50)]);
     const items = gildedRose.updateQuality();
+    expect(items[0].sellIn).toBe(9);
+  });
+
+  it("should update ClassicItem", function() {
+    const gildedRose = new Shop([new ClassicItem("foo", 10, 50)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(49);
     expect(items[0].sellIn).toBe(9);
   });
 
