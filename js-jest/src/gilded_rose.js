@@ -12,9 +12,10 @@ class Item {
   }
 }
 
+
 class ConjuredItem extends Item {
   constructor(name, sellIn, quality) {
-    super(name, sellIn, quality);
+    super(`${name} conjured`, sellIn, quality);
   }
 
   decrementQuality() {
@@ -64,8 +65,8 @@ class ClassicItem extends Item {
 class AgedBrie extends Item {
   //ça va être partagé dans une classe de base et donc il faut la faire sortir
   maxQuality = 50;
-  constructor(name, sellIn, quality) {
-    super(name, sellIn, quality);
+  constructor(sellIn, quality) {
+    super("Aged Brie", sellIn, quality);
   }
 
   increaseQuality() {
@@ -88,6 +89,10 @@ class BackStageItem extends Item {
   lastMinutePass = 6;
   almostLastMinutePass = 11;
   maxQuality = 50;
+
+  constructor(sellIn, quality) {
+    super("Backstage passes to a TAFKAL80ETC concert", sellIn, quality);
+  }
 
   incrementQuality() {
     if (this.canIncrementQuality()) {
@@ -136,52 +141,29 @@ class BackStageItem extends Item {
   }
 }
 
+class Sulfuras extends Item {
+  constructor(sellIn) {
+    const legendaryQuality = 80
+    super("Sulfuras", sellIn, legendaryQuality)
+  }
+
+  update() {}
+}
+
 class Shop {
   constructor(items = []) {
     this.items = items;
   }
 
-  backstagePass = Inventory.backstagePass;
-  agedBrie = Inventory.agedBrie;
-  sulfuras = Inventory.sulfuras;
-
-
-  isClassicItem(item) {
-    return (
-      item.name !== this.agedBrie &&
-      item.name !== this.backstagePass &&
-      item.name !== this.sulfuras &&
-      !item.name.includes("conjured")
-    );
-  }
-
-  isConjuredItem(item) {
-    return item.name.includes("conjured");
-  }
-
-
   updateQuality() {
     for (const item of this.items) {
       //inverse le if et le else pour avoir if (this.isItemThatIncreaseValueWhenIsOld) ?
       //peut être plus lisible
-
-      if (this.isClassicItem(item) || this.isConjuredItem(item) ||  this.isAgeBrieItem(item) || this.isBackStagePassItem(item)) {
         item.update();
-      }
-
     }
 
     return this.items;
   }
-
-  isBackStagePassItem(item) {
-    return item.name === this.backstagePass;
-  }
-
-  isAgeBrieItem(item) {
-    return item.name === this.agedBrie;
-  }
-
   //peut etre faire une class BackStagePass qui prend un iteam et qui calcul le quality
 }
 
@@ -193,4 +175,5 @@ module.exports = {
   ConjuredItem,
   AgedBrie,
   BackStageItem,
+  Sulfuras,
 };
